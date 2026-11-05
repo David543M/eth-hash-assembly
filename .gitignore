@@ -1,0 +1,11 @@
+# third-party source the robot model was extracted from (not our code)
+xarm_ros2/
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+# generated
+outputs/
+models/scene.xml
+models/xarm6_single.xml

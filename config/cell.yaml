@@ -1,0 +1,43 @@
+# Cell description for the hash assembly (drawing AMZ-SA-26-001 rev. A).
+# Units: metres, radians, kilograms. World frame: origin at the centre of the
+# fixture plate top surface projected onto the table, z up, x from robot A to robot B.
+
+table:
+  size: [1.40, 0.90, 0.04]          # full size, top surface at z = 0
+
+robots:
+  A:
+    base_pos: [-0.45, 0.0, 0.0]
+    base_yaw: 0.0                   # facing +x (towards the fixture)
+    home_q: [0.0, -0.35, -0.90, 0.0, 1.25, 0.0]
+  B:
+    base_pos: [0.45, 0.0, 0.0]
+    base_yaw: 3.14159265
+    home_q: [0.0, -0.35, -0.90, 0.0, 1.25, 0.0]
+
+gripper:
+  palm: [0.03, 0.05, 0.02]          # half sizes of the gripper body
+  finger: [0.008, 0.004, 0.025]     # half sizes of one finger
+  max_opening: 0.050                # distance between fingers, fully open
+  grip_force: 20.0                  # N per finger, force limit of the finger servos
+  tcp_offset: 0.075                 # flange -> TCP (grasp centre between fingers), along tool z
+
+fixture:
+  plate: [0.40, 0.40, 0.020]        # full size; also the "base plate" of the drawing
+  stop_height: 0.010
+
+steel_density: 7850.0
+
+profiles:                           # U-profiles, flanges down (EN 10162, S235JR)
+  pos1: {width: 0.040, height: 0.020, thickness: 0.002, length: 0.320}
+  pos2: {width: 0.030, height: 0.015, thickness: 0.002, length: 0.280}
+
+assembly:                           # nominal positions from the drawing
+  pos1_centre_distance: 0.120       # A2
+  pos2_centre_distance: 0.120       # A1
+
+supply:                             # pick positions (magazines), part centre x, y, yaw
+  pos1_a: [-0.40, -0.30, 0.0]
+  pos2_a: [-0.40,  0.30, 0.0]
+  pos1_b: [ 0.40,  0.30, 0.0]
+  pos2_b: [ 0.40, -0.30, 0.0]
