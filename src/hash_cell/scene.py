@@ -42,7 +42,7 @@ XARM6_INERTIA = [
     (1.354, (0.0652, 0.03179, 0.00311), (0.001473, 0.00185, 0.0023493, -0.00046355, 0.00029315, 0.000135)),
     (0.17, (0.0, -0.00677, -0.01098), (9.3e-05, 5.87e-05, 0.000132, 0.0, 0.0, -3.6e-06)),
 ]
-XARM6_KP = [1500, 1500, 1000, 500, 300, 200]   # position-servo gains (sim only)
+XARM6_KP = [6000, 6000, 4000, 2000, 1000, 600]   # position-servo gains (sim only)
 
 
 def load_config(path: Path = CONFIG) -> dict:
@@ -115,19 +115,23 @@ def _fixture(cfg: dict) -> str:
     a = cfg["assembly"]
     plate_h = f["plate"][2]
     sh = f["stop_height"] / 2
+    cl = f.get("clearance", 0.0)
     d1, d2 = a["pos1_centre_distance"] / 2, a["pos2_centre_distance"] / 2
     s = [f'<body name="fixture" pos="0 0 0">',
          f'<geom name="plate" class="fixture" type="box" size="{f["plate"][0]/2} {f["plate"][1]/2} {plate_h/2}" pos="0 0 {plate_h/2}"/>']
     # Pos 1: outer side rails (datum B) and end stops on -x (datum C)
     for sgn, tag in ((1, "l"), (-1, "r")):
-        y_rail = sgn * (d1 + p1["width"] / 2 + 0.005)
-        s.append(f'<geom name="rail_pos1_{tag}" class="fixture" type="box" size="0.12 0.005 {sh}" pos="0 {y_rail:.6g} {plate_h + sh:.6g}"/>')
-        s.append(f'<geom name="stop_pos1_{tag}" class="fixture" type="box" size="0.005 0.02 {sh}" pos="{-(p1["length"]/2 + 0.005):.6g} {sgn*d1:.6g} {plate_h + sh:.6g}"/>')
+        y_rail = sgn * (d1 + p1["width"] / 2 + cl + 0.005)
+        # two rail segments with a relief pocket in the middle for the gripper fingers
+        for k, xs in (("n", -1), ("p", 1)):
+            s.append(f'<geom name="rail_pos1_{tag}_{k}" class="fixture" type="box" size="0.05 0.005 {sh}" '
+                     f'pos="{xs * 0.09:.6g} {y_rail:.6g} {plate_h + sh:.6g}"/>')
+        s.append(f'<geom name="stop_pos1_{tag}" class="fixture" type="box" size="0.005 0.02 {sh}" pos="{-(p1["length"]/2 + cl + 0.005):.6g} {sgn*d1:.6g} {plate_h + sh:.6g}"/>')
     # Pos 2: end stops on -y, posts standing on the plate
     post_h = (p1["height"] + p2["height"] / 2) / 2
     for sgn, tag in ((1, "l"), (-1, "r")):
         s.append(f'<geom name="stop_pos2_{tag}" class="fixture" type="box" size="0.015 0.005 {post_h:.6g}" '
-                 f'pos="{sgn*d2:.6g} {-(p2["length"]/2 + 0.005):.6g} {plate_h + post_h:.6g}"/>')
+                 f'pos="{sgn*d2:.6g} {-(p2["length"]/2 + cl + 0.005):.6g} {plate_h + post_h:.6g}"/>')
     s.append("</body>")
     # nominal assembled positions, visual only (ghosts)
     z2 = plate_h + p1["height"]
@@ -165,10 +169,10 @@ def build_scene(cfg: dict | None = None) -> str:
 <option timestep="0.002" integrator="implicitfast" cone="elliptic" impratio="10"/>
 <visual><global offwidth="1920" offheight="1080"/><quality shadowsize="4096"/></visual>
 <default>
-  <default class="xarm_joint"><joint axis="0 0 1" damping="10" armature="0.1"/></default>
+  <default class="xarm_joint"><joint axis="0 0 1" damping="40" armature="0.2"/></default>
   <default class="xarm_visual"><geom type="mesh" rgba="0.92 0.92 0.92 1" contype="1" conaffinity="1" group="0"/></default>
   <default class="gripper"><geom rgba="0.15 0.15 0.15 1"/></default>
-  <default class="finger"><geom rgba="0.25 0.25 0.3 1" friction="1.2 0.02 0.001" condim="4"/></default>
+  <default class="finger"><geom rgba="0.25 0.25 0.3 1" friction="1.2 0.05 0.001" condim="6"/></default>
   <default class="fixture"><geom rgba="0.45 0.35 0.25 1"/></default>
   <default class="part"><geom density="{rho}" friction="0.6 0.01 0.001" condim="4" solref="0.004 1" solimp="0.95 0.99 0.001"/></default>
   <default class="ghost"><geom contype="0" conaffinity="0" group="2" mass="0"/></default>

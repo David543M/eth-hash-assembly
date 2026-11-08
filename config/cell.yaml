@@ -3,7 +3,7 @@
 # fixture plate top surface projected onto the table, z up, x from robot A to robot B.
 
 table:
-  size: [1.40, 0.90, 0.04]          # full size, top surface at z = 0
+  size: [1.40, 1.10, 0.04]          # full size, top surface at z = 0
 
 robots:
   A:
@@ -17,7 +17,7 @@ robots:
 
 gripper:
   palm: [0.03, 0.05, 0.02]          # half sizes of the gripper body
-  finger: [0.008, 0.004, 0.025]     # half sizes of one finger
+  finger: [0.015, 0.004, 0.025]     # half sizes of one finger (30 mm wide pad)
   max_opening: 0.050                # distance between fingers, fully open
   grip_force: 20.0                  # N per finger, force limit of the finger servos
   tcp_offset: 0.075                 # flange -> TCP (grasp centre between fingers), along tool z
@@ -25,6 +25,8 @@ gripper:
 fixture:
   plate: [0.40, 0.40, 0.020]        # full size; also the "base plate" of the drawing
   stop_height: 0.010
+  clearance: 0.0015                 # gap between nominal part faces and datum rails / stops
+                                    # (lead-in for the robot; pushers close it in the real fixture)
 
 steel_density: 7850.0
 
@@ -37,7 +39,9 @@ assembly:                           # nominal positions from the drawing
   pos2_centre_distance: 0.120       # A1
 
 supply:                             # pick positions (magazines), part centre x, y, yaw
-  pos1_a: [-0.40, -0.30, 0.0]
-  pos2_a: [-0.40,  0.30, 0.0]
-  pos1_b: [ 0.40,  0.30, 0.0]
-  pos2_b: [ 0.40, -0.30, 0.0]
+  # at ~450 mm from the robot base: at 300 mm the tool-down pose is close to the
+  # J4/J6 alignment (J5 -> 0) and the dexterity drops (see scripts/analyze_xarm6.py)
+  pos1_a: [-0.40, -0.45, 0.0]
+  pos2_a: [-0.40,  0.45, 0.0]
+  pos1_b: [ 0.40,  0.45, 0.0]
+  pos2_b: [ 0.40, -0.45, 0.0]

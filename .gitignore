@@ -9,3 +9,16 @@ __pycache__/
 outputs/
 models/scene.xml
 models/xarm6_single.xml
+# LaTeX build files and drafts
+docs/report/*.aux
+docs/report/*.fdb_latexmk
+docs/report/*.fls
+docs/report/*.log
+docs/report/*.out
+docs/report/*.toc
+docs/report/*.tmp
+docs/report/report_before_*
+docs/report/Claude outputs/
+# personal scratch script
+scripts/mujoco_1.py
+docs/report/report-1.*

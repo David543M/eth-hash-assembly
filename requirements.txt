@@ -1,4 +1,5 @@
 mujoco>=3.2
 numpy
+matplotlib
 pyyaml
 pytest
